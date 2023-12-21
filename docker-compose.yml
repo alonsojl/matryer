@@ -1,0 +1,39 @@
+version: "3.1"
+services:
+  rest-api-dev:
+    build:
+     context: .
+     dockerfile: Dockerfile
+     target: dev
+    restart: always
+    ports:
+      - ${API_PORT}:8080
+    env_file:
+      - .env.server
+    links:
+      - mysql-db
+    volumes:
+      - .:/home/rest-api:delegated
+    command: make live
+  rest-api-prod:
+    build:
+     context: .
+     dockerfile: Dockerfile
+     target: prod
+    restart: always
+    ports:
+      - ${API_PORT}:8080
+    env_file:
+      - .env.server
+    links:
+      - mysql-db
+  mysql-db:
+    image: mysql:8.0
+    restart: always
+    environment:    
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}      
+    ports:
+      - ${MYSQL_PORT}:3306
