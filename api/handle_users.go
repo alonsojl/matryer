@@ -82,7 +82,7 @@ func (s *server) handleUsersCreate() http.HandlerFunc {
 
 		if err = s.decode(r, &req); err != nil {
 			s.logger.Errorf("invalid user request: %v", err)
-			s.renderResponse(w, ErrBadRequest())
+			s.renderResponse(w, BadRequest())
 			return
 		}
 
@@ -97,7 +97,7 @@ func (s *server) handleUsersCreate() http.HandlerFunc {
 
 		if err != nil {
 			s.logger.Errorf("error creating user:: %v", err)
-			s.renderResponse(w, ErrInternalServer())
+			s.renderResponse(w, InternalServerError())
 			return
 		}
 
