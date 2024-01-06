@@ -17,22 +17,20 @@ type response struct {
 }
 
 func (s *server) renderResponse(w http.ResponseWriter, err error) {
-	var (
-		customerr Error
-		resp      = response{
-			Status:    "fail",
-			Datetime:  time.Now().Format("2006-01-02 15:04:05"),
-			Timestamp: time.Now().Unix(),
-		}
-	)
+	var customerr Error
 
 	if !errors.As(err, &customerr) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	resp.HTTPCode = customerr.Code
-	resp.Error = customerr.Err
+	resp := response{
+		Status:    "fail",
+		Datetime:  time.Now().Format("2006-01-02 15:04:05"),
+		Timestamp: time.Now().Unix(),
+		HTTPCode:  customerr.Code,
+		Error:     customerr.Err,
+	}
 
 	s.respond(w, resp, resp.HTTPCode)
 }
@@ -44,8 +42,4 @@ func (s *server) respond(w http.ResponseWriter, data interface{}, status int) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
-}
-
-func (s *server) decode(r *http.Request, v interface{}) error {
-	return json.NewDecoder(r.Body).Decode(v)
 }

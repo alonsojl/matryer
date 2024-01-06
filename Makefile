@@ -62,10 +62,6 @@ tools: ## Install tools.
 	@go install -tags 'mysql' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 	@curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.55.2
 
-.PHONY: mockery
-mockery: ## Generate mocks.
-	@mockery
-
 .PHONY: run-prod
 run-prod: ## Run application in production.
 	@docker compose run rest-api-prod
