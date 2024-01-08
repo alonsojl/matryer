@@ -29,9 +29,14 @@ func run() error {
 
 	logger := api.NewLogger()
 	userStore := db.NewMySQLUserStore(client, logger)
-
 	router := chi.NewRouter()
-	srv := api.NewServer(router, logger, userStore)
+
+	config := api.NewConfig().
+		WithRouter(router).
+		WithLogger(logger).
+		WithUserStore(userStore)
+
+	srv := api.NewServer(config)
 	addr := fmt.Sprintf(":%s", apiPort)
 
 	logger.Infof("listening and serving %s", addr)

@@ -25,9 +25,9 @@ func (s *server) handleUsersGet() http.HandlerFunc {
 		User      []userResponse `json:"user"`
 	}
 	return func(w http.ResponseWriter, r *http.Request) {
-		users, err := s.userStore.GetUsers()
+		users, err := s.config.userStore.GetUsers()
 		if err != nil {
-			s.logger.Errorf("error getting users: %v", err)
+			s.config.logger.Errorf("error getting users: %v", err)
 			s.renderResponse(w, err)
 			return
 		}
@@ -81,12 +81,12 @@ func (s *server) handleUsersCreate() http.HandlerFunc {
 		)
 
 		if err = s.decode(r, &req); err != nil {
-			s.logger.Errorf("invalid user request: %v", err)
+			s.config.logger.Errorf("invalid user request: %v", err)
 			s.renderResponse(w, BadRequest())
 			return
 		}
 
-		user, err := s.userStore.CreateUser(r.Context(), &model.UserParams{
+		user, err := s.config.userStore.CreateUser(r.Context(), &model.UserParams{
 			Name:      req.Name,
 			FirstName: req.FirstName,
 			LastName:  req.LastName,
@@ -96,7 +96,7 @@ func (s *server) handleUsersCreate() http.HandlerFunc {
 		})
 
 		if err != nil {
-			s.logger.Errorf("error creating user:: %v", err)
+			s.config.logger.Errorf("error creating user:: %v", err)
 			s.renderResponse(w, InternalServerError())
 			return
 		}

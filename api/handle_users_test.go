@@ -27,7 +27,12 @@ func TestHandleUsers(t *testing.T) {
 	defer client.Close()
 
 	userStore := db.NewMySQLUserStore(client, logger)
-	srv := api.NewServer(router, logger, userStore)
+	config := api.NewConfig().
+		WithRouter(router).
+		WithLogger(logger).
+		WithUserStore(userStore)
+
+	srv := api.NewServer(config)
 	t.Run("get users", func(t *testing.T) {
 		r := httptest.NewRequest(http.MethodGet, path, nil)
 		w := httptest.NewRecorder()

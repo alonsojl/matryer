@@ -1,29 +1,21 @@
 package api
 
 import (
-	"matryer/db"
 	"net/http"
-
-	"github.com/go-chi/chi/v5"
-	"github.com/sirupsen/logrus"
 )
 
 type server struct {
-	router    *chi.Mux
-	logger    *logrus.Logger
-	userStore db.UserStore
+	config *config
 }
 
-func NewServer(router *chi.Mux, logger *logrus.Logger, userStore db.UserStore) *server {
+func NewServer(config *config) *server {
 	s := &server{
-		router:    router,
-		logger:    logger,
-		userStore: userStore,
+		config: config,
 	}
 	s.routes()
 	return s
 }
 
 func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	s.router.ServeHTTP(w, r)
+	s.config.router.ServeHTTP(w, r)
 }
