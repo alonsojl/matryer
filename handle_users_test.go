@@ -1,10 +1,9 @@
-package api_test
+package api
 
 import (
 	"bytes"
 	"encoding/json"
-	"matryer/api"
-	"matryer/db"
+
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -18,21 +17,21 @@ func TestHandleUsers(t *testing.T) {
 	var (
 		is     = is.New(t)
 		path   = "/api/v1/users/"
-		logger = api.NewLogger()
+		logger = NewLogger()
 		router = chi.NewRouter()
 	)
 
-	client, err := db.Setup()
+	client, err := Setup()
 	is.NoErr(err)
 	defer client.Close()
 
-	userStore := db.NewMySQLUserStore(client, logger)
-	config := api.NewConfig().
+	userStore := NewMySQLUserStore(client, logger)
+	config := NewConfig().
 		WithRouter(router).
 		WithLogger(logger).
 		WithUserStore(userStore)
 
-	srv := api.NewServer(config)
+	srv := NewServer(config)
 	t.Run("get users", func(t *testing.T) {
 		r := httptest.NewRequest(http.MethodGet, path, nil)
 		w := httptest.NewRecorder()

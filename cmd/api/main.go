@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	"matryer/api"
-	"matryer/db"
+
 	"net/http"
 	"os"
 
+	api "github.com/alonsojl/matryer"
 	"github.com/go-chi/chi/v5"
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -21,14 +21,14 @@ func main() {
 func run() error {
 	var apiPort = os.Getenv("API_PORT")
 
-	client, err := db.Setup()
+	client, err := api.Setup()
 	if err != nil {
 		return err
 	}
 	defer client.Close()
 
 	logger := api.NewLogger()
-	userStore := db.NewMySQLUserStore(client, logger)
+	userStore := api.NewMySQLUserStore(client, logger)
 	router := chi.NewRouter()
 
 	config := api.NewConfig().

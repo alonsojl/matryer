@@ -15,18 +15,18 @@ services:
     volumes:
       - .:/home/rest-api:delegated
     command: make live
-  rest-api-prod:
-    build:
-     context: .
-     dockerfile: Dockerfile
-     target: prod
-    restart: always
-    ports:
-      - ${API_PORT}:8080
-    env_file:
-      - .env.server
-    links:
-      - mysql-db
+  # rest-api-prod:
+  #   build:
+  #    context: .
+  #    dockerfile: Dockerfile
+  #    target: prod
+  #   restart: always
+  #   ports:
+  #     - ${API_PORT}:8080
+  #   env_file:
+  #     - .env.server
+  #   links:
+  #     - mysql-db
   mysql-db:
     image: mysql:8.0
     restart: always

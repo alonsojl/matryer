@@ -1,7 +1,6 @@
 package api
 
 import (
-	"matryer/model"
 	"net/http"
 	"time"
 )
@@ -86,7 +85,7 @@ func (s *server) handleUsersCreate() http.HandlerFunc {
 			return
 		}
 
-		user, err := s.config.userStore.CreateUser(r.Context(), &model.UserParams{
+		user, err := s.config.userStore.CreateUser(r.Context(), &CreateUserParams{
 			Name:      req.Name,
 			FirstName: req.FirstName,
 			LastName:  req.LastName,

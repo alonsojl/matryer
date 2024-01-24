@@ -1,8 +1,6 @@
 package api
 
 import (
-	"matryer/db"
-
 	"github.com/go-chi/chi/v5"
 	"github.com/sirupsen/logrus"
 )
@@ -10,7 +8,7 @@ import (
 type config struct {
 	router    *chi.Mux
 	logger    *logrus.Logger
-	userStore db.UserStore
+	userStore UserStore
 }
 
 func NewConfig() *config {
@@ -27,7 +25,7 @@ func (c *config) WithLogger(logger *logrus.Logger) *config {
 	return c
 }
 
-func (c *config) WithUserStore(userStore db.UserStore) *config {
+func (c *config) WithUserStore(userStore UserStore) *config {
 	c.userStore = userStore
 	return c
 }

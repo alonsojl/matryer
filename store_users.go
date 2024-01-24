@@ -1,16 +1,15 @@
-package db
+package api
 
 import (
 	"context"
-	"matryer/model"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/sirupsen/logrus"
 )
 
 type UserStore interface {
-	GetUsers() ([]*model.UserStore, error)
-	CreateUser(context.Context, *model.UserParams) (*model.UserStore, error)
+	GetUsers() ([]*User, error)
+	CreateUser(context.Context, *CreateUserParams) (*User, error)
 }
 
 type MySQLUserStore struct {
@@ -25,8 +24,8 @@ func NewMySQLUserStore(client *sqlx.DB, logger *logrus.Logger) *MySQLUserStore {
 	}
 }
 
-func (s *MySQLUserStore) GetUsers() ([]*model.UserStore, error) {
-	var users []*model.UserStore
+func (s *MySQLUserStore) GetUsers() ([]*User, error) {
+	var users []*User
 	err := s.client.Select(&users, "CALL spGetUsers()")
 	if err != nil {
 		s.logger.Errorf("error get users: %v", err)
@@ -41,7 +40,7 @@ func (s *MySQLUserStore) GetUsers() ([]*model.UserStore, error) {
 	return users, nil
 }
 
-func (s *MySQLUserStore) CreateUser(ctx context.Context, user *model.UserParams) (*model.UserStore, error) {
+func (s *MySQLUserStore) CreateUser(ctx context.Context, user *CreateUserParams) (*User, error) {
 	var userID int64
 	query := "CALL spCreateUser(?,?,?,?,?,?)"
 	err := s.client.QueryRowxContext(ctx, query,
@@ -58,7 +57,7 @@ func (s *MySQLUserStore) CreateUser(ctx context.Context, user *model.UserParams)
 		return nil, err
 	}
 
-	return &model.UserStore{
+	return &User{
 		ID:        userID,
 		Name:      user.Name,
 		FirstName: user.FirstName,

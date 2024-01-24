@@ -1,7 +1,7 @@
-package model
+package api
 
 type (
-	UserParams struct {
+	CreateUserParams struct {
 		Name      string
 		FirstName string
 		LastName  string
@@ -10,7 +10,7 @@ type (
 		Age       int32
 	}
 
-	UserStore struct {
+	User struct {
 		ID        int64  `db:"id"`
 		Name      string `db:"name"`
 		FirstName string `db:"first_name"`
