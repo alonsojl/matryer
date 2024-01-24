@@ -17,38 +17,13 @@ help: ## Display this help.
 
 ##@ Development
 
-.PHONY: fmt
-fmt: ## Format source code.
-	@go fmt ./...
-
-.PHONY: vet
-vet: ## Vet source code.
-	@go vet ./...
-
 .PHONY: linter
 linter: ## Lint source code.
 	@golangci-lint run -c .golangci.yml > linter.txt
-
-.PHONY: clean
-clean: ## Clean build files and cache.
-	@go clean
-	@rm -rf ./bin/matryer
-	
-.PHONY: swagger
-swagger:  ## Generate doc swagger.
-	@swag init --ot yaml,json -o ./docs -g ./main.go
 			 
 .PHONY: live	
 live:  ## Live reload for Go applications.
 	@air -c .air.toml 
-
-.PHONY: build
-build: clean ## Build application.
-	@go build -o ./bin/matryer ./main.go
-
-.PHONY: run
-run: swagger build ## Run application.
-	@./bin/matryer
 
 .PHONY: test
 test: ## Run unit tests.
@@ -61,11 +36,6 @@ tools: ## Install tools.
 	@go install github.com/vektra/mockery/v2@v2.38.0
 	@go install -tags 'mysql' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 	@curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.55.2
-
-.PHONY: run-prod
-run-prod: ## Run application in production.
-	@docker compose run rest-api-prod
-	@docker compose run mysql-db
 
 .PHONY: migrate-up
 migrate-up: ## Up migrations.

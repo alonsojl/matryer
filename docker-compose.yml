@@ -1,10 +1,9 @@
 version: "3.1"
 services:
-  rest-api-dev:
+  rest-api:
     build:
      context: .
      dockerfile: Dockerfile
-     target: dev
     restart: always
     ports:
       - ${API_PORT}:8080
@@ -15,18 +14,6 @@ services:
     volumes:
       - .:/home/rest-api:delegated
     command: make live
-  # rest-api-prod:
-  #   build:
-  #    context: .
-  #    dockerfile: Dockerfile
-  #    target: prod
-  #   restart: always
-  #   ports:
-  #     - ${API_PORT}:8080
-  #   env_file:
-  #     - .env.server
-  #   links:
-  #     - mysql-db
   mysql-db:
     image: mysql:8.0
     restart: always

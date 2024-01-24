@@ -1,4 +1,4 @@
-package api
+package apirest
 
 type (
 	CreateUserParams struct {
@@ -10,13 +10,13 @@ type (
 		Age       int32
 	}
 
-	User struct {
-		ID        int64  `db:"id"`
-		Name      string `db:"name"`
-		FirstName string `db:"first_name"`
-		LastName  string `db:"last_name"`
-		Email     string `db:"email"`
-		Phone     string `db:"phone"`
-		Age       int32  `db:"age"`
+	UserData struct {
+		ID        int64  `json:"id"`
+		Name      string `json:"name"`
+		FirstName string `json:"first_name"`
+		LastName  string `json:"last_name"`
+		Email     string `json:"email"`
+		Phone     string `json:"phone,omitempty"`
+		Age       int32  `json:"age"`
 	}
 )

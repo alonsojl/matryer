@@ -1,4 +1,4 @@
-package api
+package apirest
 
 import (
 	"encoding/json"
@@ -16,7 +16,7 @@ type response struct {
 	Timestamp int64  `json:"timestamp"`
 }
 
-func (s *server) renderResponse(w http.ResponseWriter, err error) {
+func (s *server) respondErr(w http.ResponseWriter, err error) {
 	var errresp ErrorResponse
 
 	if !errors.As(err, &errresp) {

@@ -1,4 +1,4 @@
-package api
+package apirest
 
 import (
 	"context"
@@ -7,9 +7,19 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+type dbUser struct {
+	ID        int64  `db:"id"`
+	Name      string `db:"name"`
+	FirstName string `db:"first_name"`
+	LastName  string `db:"last_name"`
+	Email     string `db:"email"`
+	Phone     string `db:"phone"`
+	Age       int32  `db:"age"`
+}
+
 type UserStore interface {
-	GetUsers() ([]*User, error)
-	CreateUser(context.Context, *CreateUserParams) (*User, error)
+	GetUsers() ([]*UserData, error)
+	CreateUser(context.Context, *CreateUserParams) (*UserData, error)
 }
 
 type MySQLUserStore struct {
@@ -24,23 +34,36 @@ func NewMySQLUserStore(client *sqlx.DB, logger *logrus.Logger) *MySQLUserStore {
 	}
 }
 
-func (s *MySQLUserStore) GetUsers() ([]*User, error) {
-	var users []*User
-	err := s.client.Select(&users, "CALL spGetUsers()")
+func (s *MySQLUserStore) GetUsers() ([]*UserData, error) {
+	var dbUsers []*dbUser
+	err := s.client.Select(&dbUsers, "CALL spGetUsers()")
 	if err != nil {
 		s.logger.Errorf("error get users: %v", err)
 		return nil, err
 	}
 
-	if len(users) == 0 {
+	if len(dbUsers) == 0 {
 		s.logger.Error("there are no user records")
 		return nil, err
+	}
+
+	var users []*UserData
+	for _, dbUser := range dbUsers {
+		users = append(users, &UserData{
+			ID:        dbUser.ID,
+			Name:      dbUser.Name,
+			FirstName: dbUser.FirstName,
+			LastName:  dbUser.LastName,
+			Email:     dbUser.Email,
+			Phone:     dbUser.Phone,
+			Age:       dbUser.Age,
+		})
 	}
 
 	return users, nil
 }
 
-func (s *MySQLUserStore) CreateUser(ctx context.Context, user *CreateUserParams) (*User, error) {
+func (s *MySQLUserStore) CreateUser(ctx context.Context, user *CreateUserParams) (*UserData, error) {
 	var userID int64
 	query := "CALL spCreateUser(?,?,?,?,?,?)"
 	err := s.client.QueryRowxContext(ctx, query,
@@ -57,7 +80,7 @@ func (s *MySQLUserStore) CreateUser(ctx context.Context, user *CreateUserParams)
 		return nil, err
 	}
 
-	return &User{
+	return &UserData{
 		ID:        userID,
 		Name:      user.Name,
 		FirstName: user.FirstName,

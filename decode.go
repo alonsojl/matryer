@@ -1,4 +1,4 @@
-package api
+package apirest
 
 import (
 	"encoding/json"

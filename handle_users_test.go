@@ -1,4 +1,4 @@
-package api
+package apirest
 
 import (
 	"bytes"
@@ -21,7 +21,7 @@ func TestHandleUsers(t *testing.T) {
 		router = chi.NewRouter()
 	)
 
-	client, err := Setup()
+	client, err := MySQLConnection()
 	is.NoErr(err)
 	defer client.Close()
 
