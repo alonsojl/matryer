@@ -1,6 +1,7 @@
 package apirest
 
 import (
+	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/go-chi/chi/v5"
 	"github.com/sirupsen/logrus"
 )
@@ -8,6 +9,7 @@ import (
 type config struct {
 	router    *chi.Mux
 	logger    *logrus.Logger
+	doc       *openapi3.T
 	userStore UserStore
 }
 
@@ -22,6 +24,11 @@ func (c *config) WithRouter(router *chi.Mux) *config {
 
 func (c *config) WithLogger(logger *logrus.Logger) *config {
 	c.logger = logger
+	return c
+}
+
+func (c *config) WithOpenapi3(doc *openapi3.T) *config {
+	c.doc = doc
 	return c
 }
 

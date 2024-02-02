@@ -32,8 +32,6 @@ test: ## Run unit tests.
 .PHONY: tools
 tools: ## Install tools.
 	@go install github.com/cosmtrek/air@latest
-	@go install github.com/swaggo/swag/cmd/swag@latest
-	@go install github.com/vektra/mockery/v2@v2.38.0
 	@go install -tags 'mysql' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 	@curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.55.2
 
