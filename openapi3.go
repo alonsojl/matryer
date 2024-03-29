@@ -163,6 +163,16 @@ func (api *OpenAPI3) WithUser() *OpenAPI3 {
 				openapi3.WithStatus(201, &openapi3.ResponseRef{
 					Ref: "#/components/responses/CreateUsersResponse",
 				}),
+				openapi3.WithStatus(400, &openapi3.ResponseRef{
+					Value: openapi3.NewResponse().
+						WithDescription("Response when client errors happen.").
+						WithJSONSchema(openapi3.NewSchema().
+							WithProperty("error", openapi3.NewStringSchema()).
+							WithProperty("status", openapi3.NewStringSchema()).
+							WithProperty("http_code", openapi3.NewInt32Schema()).
+							WithProperty("datetime", openapi3.NewStringSchema()).
+							WithProperty("timestamp", openapi3.NewInt64Schema())),
+				}),
 			),
 		},
 	})
