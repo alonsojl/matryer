@@ -7,11 +7,11 @@ import (
 
 func (s *server) handleUsersGet() http.HandlerFunc {
 	type response struct {
-		Status    string      `json:"status"`
-		HTTPCode  int         `json:"http_code"`
-		Datetime  string      `json:"datetime"`
-		Timestamp int64       `json:"timestamp"`
-		User      []*UserData `json:"user"`
+		Status    string `json:"status"`
+		HTTPCode  int    `json:"http_code"`
+		Datetime  string `json:"datetime"`
+		Timestamp int64  `json:"timestamp"`
+		Users     Users  `json:"users"`
 	}
 	return func(w http.ResponseWriter, r *http.Request) {
 		users, err := s.config.userStore.GetUsers()
@@ -26,7 +26,7 @@ func (s *server) handleUsersGet() http.HandlerFunc {
 			HTTPCode:  http.StatusOK,
 			Datetime:  time.Now().Format("2006-01-02 15:04:05"),
 			Timestamp: time.Now().Unix(),
-			User:      users,
+			Users:     users,
 		}, http.StatusOK)
 	}
 }
@@ -51,12 +51,9 @@ func (s *server) handleUsersCreate() http.HandlerFunc {
 		}
 	)
 	return func(w http.ResponseWriter, r *http.Request) {
-		var (
-			req request
-			err error
-		)
+		var req request
 
-		if err = s.decode(r, &req); err != nil {
+		if err := s.decode(r, &req); err != nil {
 			s.config.logger.Errorf("invalid user request: %v", err)
 			s.respondErr(w, BadRequest())
 			return

@@ -26,20 +26,19 @@ func run() error {
 	}
 	defer client.Close()
 
-	logger := apirest.NewLogger()
-	userStore := apirest.NewMySQLUserStore(client, logger)
-	router := chi.NewRouter()
-	doc := apirest.NewOpenAPI3().WithUser().Generate()
-
-	config := apirest.NewConfig().
-		WithRouter(router).
-		WithLogger(logger).
-		WithOpenapi3(doc).
-		WithUserStore(userStore)
-
-	srv := apirest.NewServer(config)
-	addr := fmt.Sprintf(":%s", apiPort)
-
+	var (
+		logger    = apirest.NewLogger()
+		userStore = apirest.NewMySQLUserStore(client, logger)
+		router    = chi.NewRouter()
+		doc       = apirest.NewOpenAPI3().WithUser().Generate()
+		config    = apirest.NewConfig().
+				WithRouter(router).
+				WithLogger(logger).
+				WithOpenapi3(doc).
+				WithUserStore(userStore)
+		srv  = apirest.NewServer(config)
+		addr = fmt.Sprintf(":%s", apiPort)
+	)
 	logger.Infof("listening and serving %s", addr)
 
 	return http.ListenAndServe(addr, srv)

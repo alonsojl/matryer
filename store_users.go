@@ -8,7 +8,7 @@ import (
 )
 
 type dbUser struct {
-	ID        int64  `db:"id"`
+	Id        int    `db:"id"`
 	Name      string `db:"name"`
 	FirstName string `db:"first_name"`
 	LastName  string `db:"last_name"`
@@ -18,8 +18,8 @@ type dbUser struct {
 }
 
 type UserStore interface {
-	GetUsers() ([]*UserData, error)
-	CreateUser(context.Context, *CreateUserParams) (*UserData, error)
+	GetUsers() ([]*User, error)
+	CreateUser(context.Context, *CreateUserParams) (*User, error)
 }
 
 type MySQLUserStore struct {
@@ -34,7 +34,7 @@ func NewMySQLUserStore(client *sqlx.DB, logger *logrus.Logger) *MySQLUserStore {
 	}
 }
 
-func (s *MySQLUserStore) GetUsers() ([]*UserData, error) {
+func (s *MySQLUserStore) GetUsers() ([]*User, error) {
 	var dbUsers []*dbUser
 	err := s.client.Select(&dbUsers, "CALL spGetUsers()")
 	if err != nil {
@@ -47,10 +47,10 @@ func (s *MySQLUserStore) GetUsers() ([]*UserData, error) {
 		return nil, err
 	}
 
-	var users []*UserData
+	var users Users
 	for _, dbUser := range dbUsers {
-		users = append(users, &UserData{
-			ID:        dbUser.ID,
+		users = append(users, &User{
+			Id:        dbUser.Id,
 			Name:      dbUser.Name,
 			FirstName: dbUser.FirstName,
 			LastName:  dbUser.LastName,
@@ -63,8 +63,8 @@ func (s *MySQLUserStore) GetUsers() ([]*UserData, error) {
 	return users, nil
 }
 
-func (s *MySQLUserStore) CreateUser(ctx context.Context, user *CreateUserParams) (*UserData, error) {
-	var userID int64
+func (s *MySQLUserStore) CreateUser(ctx context.Context, user *CreateUserParams) (*User, error) {
+	var userId int
 	query := "CALL spCreateUser(?,?,?,?,?,?)"
 	err := s.client.QueryRowxContext(ctx, query,
 		user.Name,
@@ -73,15 +73,15 @@ func (s *MySQLUserStore) CreateUser(ctx context.Context, user *CreateUserParams)
 		user.Email,
 		user.Phone,
 		user.Age,
-	).Scan(&userID)
+	).Scan(&userId)
 
 	if err != nil {
 		s.logger.Errorf("failed to insert user: %v", err)
 		return nil, err
 	}
 
-	return &UserData{
-		ID:        userID,
+	return &User{
+		Id:        userId,
 		Name:      user.Name,
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
